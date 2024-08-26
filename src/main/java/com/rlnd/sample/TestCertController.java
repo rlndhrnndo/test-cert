@@ -43,21 +43,21 @@ public class TestCertController {
 
     final static Pattern KEY_PATTERN = Pattern.compile(
             "-----BEGIN\\s+.*PRIVATE\\s+KEY[^-]*-+(?:\\s|\\r|\\n)+" + // Header
-                    "([a-z0-9+/=\\r\\n]+)" +                       // Base64 text
-                    "-+END\\s+.*PRIVATE\\s+KEY[^-]*-+",            // Footer
+                    "([a-z0-9+/=\\r\\n]+)" + // Base64 text
+                    "-+END\\s+.*PRIVATE\\s+KEY[^-]*-+", // Footer
             CASE_INSENSITIVE);
 
     private static KeyStore createKeyStore() {
-		KeyStore keyStore;
-		try {
-			keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			keyStore.load(null, null);
-		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException
-				| IOException ex) {
-			throw new RuntimeException("Error creating the KeyStore", ex);
-		}
-		return keyStore;
-	}
+        KeyStore keyStore;
+        try {
+            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(null, null);
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException
+                | IOException ex) {
+            throw new RuntimeException("Error creating the KeyStore", ex);
+        }
+        return keyStore;
+    }
 
     /**
      * This assumes that there are no passwords on the private key
@@ -73,7 +73,8 @@ public class TestCertController {
         if (!matcher.find()) {
             throw new KeyStoreException("Key not found");
         }
-        var encodedKeySpec = new PKCS8EncodedKeySpec(Base64.getMimeDecoder().decode(matcher.group(1).getBytes(StandardCharsets.US_ASCII)));
+        var encodedKeySpec = new PKCS8EncodedKeySpec(
+                Base64.getMimeDecoder().decode(matcher.group(1).getBytes(StandardCharsets.US_ASCII)));
         var keyFactory = KeyFactory.getInstance("RSA");
         key = keyFactory.generatePrivate(encodedKeySpec);
         return key;
@@ -87,12 +88,12 @@ public class TestCertController {
         final var certStream = new FileInputStream(new File("src/main/resources/cert.cer"));
         final var keyStream = new FileInputStream(new File("src/main/resources/private.key"));
 
-        //generate certificates
+        // generate certificates
         final var ca = (X509Certificate) CertificateFactory.getInstance("X.509")
                 .generateCertificate(caStream);
         final var cert = (X509Certificate) CertificateFactory.getInstance("X.509")
                 .generateCertificate(certStream);
-        //generate key
+        // generate key
         final var key = generatePrivateKey(keyStream);
 
         var sslContext = SSLContext.getInstance("TLS");
@@ -164,6 +165,5 @@ public class TestCertController {
                 .retrieve()
                 .body(String.class);
     }
-    
 
 }
