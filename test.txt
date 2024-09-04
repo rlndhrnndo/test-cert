@@ -1,3 +1,5 @@
 Hello World
 
 This is my edit from feature branch
+
+I'm doing another edit from master directly
